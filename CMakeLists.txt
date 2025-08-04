@@ -21,4 +21,4 @@ enable_testing()
 
 add_executable(CMakdulesTest "tests/main.cpp")
 
-target_link_libraries(CMakdulesTest PRIVATE ModuleA)
+target_link_libraries(CMakdulesTest PRIVATE module_a)

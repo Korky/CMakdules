@@ -1,8 +1,8 @@
-#include "ModuleA.h"
+#include "module_a.h"
 
 int main() {
-    ASpace::ModuleA moduleA;
-    moduleA.Hey();    
+    a_space::module_a moduleA;
+    moduleA.hey();    
     return 0;
 }
 

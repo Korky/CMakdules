@@ -1,9 +1,9 @@
-#include "ModuleA.h"
+#include "module_a.h"
 #include <iostream>
 
-namespace ASpace{
+namespace a_space {
 
-    void ModuleA::Hey(){
+    void module_a::hey(){
 
         std::cout << "Hey from Module A \n";
         

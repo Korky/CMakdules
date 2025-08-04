@@ -17,3 +17,36 @@ CMakeUserPresets.json
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #cmake-build-*
+# CMake generated files
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+_CPack_Packages/
+DartConfiguration.tcl
+Testing/
+
+# IDE specific files (if applicable)
+.idea/ # For CLion
+.vscode/ # For VSCode
+*.suo # For Visual Studio
+*.user # For Visual Studio
+*.vcproj.user # For Visual Studio
+*.vcxproj.user # For Visual Studio
+
+# Executables and libraries (if not placed in a dedicated build directory)
+*.exe
+*.dll
+*.so
+*.a
+*.lib
+
+# Object files
+*.o
+*.obj
+
+# Temporary files
+*.log
+*.tmp

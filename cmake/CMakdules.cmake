@@ -15,6 +15,22 @@
 #       EXTERNAL_DAISY_CHAINS
 #           [ThirdParty Libraries to daisy chain]
 # )
+# Usage:
+# register_module(
+#   MyModule 
+#       TYPE
+#           STATIC
+#       PUBLIC_DEPENDENCIES
+#           ModuleA
+#           ModuleB 
+#       PRIVATE_DEPENDENCIES
+#           ModuleC 
+#       EXTERNAL_DEPENDENCIES
+#           pthread
+#       EXTERNAL_DAISY_CHAINS
+#           GlobalNeededLib
+#)
+# ===================================================
 
 function(register_module MODULE_NAME)
     
@@ -100,4 +116,41 @@ function(register_module MODULE_NAME)
     endforeach()
 
 
+endfunction()
+
+# ===================================================
+# Function discover_modules(PARAMS)
+# ===================================================
+# Registers Modules into Build System
+# register_module (
+#   DISCOVERY_PATH
+#       [Path to scan for modules]
+# )
+# It saves the discovered modules in a global property
+# DISCOVERED_MODULES that can be retrieved with:
+# get_property(MODULES GLOBAL PROPERTY DISCOVERED_MODULES)
+# Usage:
+# discover_modules(${CMAKE_CURRENT_SOURCE_DIR}/modules)
+# ===================================================
+function(discover_modules DISCOVERY_PATH)
+
+    message(STATUS "Discovering modules in: ${DISCOVERY_PATH}")
+
+    # Get existing targets property for global use
+    get_property(EXISTING_TARGETS GLOBAL PROPERTY DISCOVERED_MODULES)
+    if(NOT EXISTING_TARGETS)
+        set(EXISTING_TARGETS "")
+    endif()
+    
+    # Discover subdirectories
+    file(GLOB SUBMODULE_DIRS RELATIVE ${DISCOVERY_PATH} ${DISCOVERY_PATH}/*)
+    foreach(SUB_DIR ${SUBMODULE_DIRS})
+        if (IS_DIRECTORY "${DISCOVERY_PATH}/${SUB_DIR}")
+            add_subdirectory("${DISCOVERY_PATH}/${SUB_DIR}")
+            # Append to existing targets
+            list(APPEND EXISTING_TARGETS ${SUB_DIR})
+        endif()
+    endforeach()
+    # Set the global property for discovered modules
+    set_property(GLOBAL PROPERTY DISCOVERED_MODULES "${EXISTING_TARGETS}")
 endfunction()

@@ -7,10 +7,10 @@
   },
   "configurePresets": [
     {
-      "name": "debug",
-      "description": "Debug build with LLVM/Clang",
+      "name": "windows-debug",
+      "description": "Debug build with LLVM/Clang on Windows",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/debug",
+      "binaryDir": "${sourceDir}/build/windows/debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_STANDARD": "20",
@@ -20,10 +20,10 @@
       }
     },
     {
-      "name": "release",
-      "description": "Release build with LLVM/Clang",
+      "name": "windows-release",
+      "description": "Release build with LLVM/Clang on Windows",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/release",
+      "binaryDir": "${sourceDir}/build/windows/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CXX_STANDARD": "20",
@@ -31,26 +31,44 @@
         "CMAKE_C_COMPILER": "clang-cl",
         "CMAKE_LINKER": "lld-link"
       }
+    },
+    {
+      "name": "linux-debug",
+      "description": "Debug build with LLVM/Clang on Linux",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_LINKER": "lld"
+      }
+    },
+    {
+      "name": "linux-release",
+      "description": "Release build with LLVM/Clang on Linux",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_LINKER": "lld"
+      }
     }
   ],
   "buildPresets": [
-    {
-      "name": "debug",
-      "configurePreset": "debug"
-    },
-    {
-      "name": "release",
-      "configurePreset": "release"
-    }
+    { "name": "Windows-Debug", "configurePreset": "windows-debug" },
+    { "name": "Windows-Release", "configurePreset": "windows-release" },
+    { "name": "Linux-Debug", "configurePreset": "linux-debug" },
+    { "name": "Linux-Release", "configurePreset": "linux-release" }
   ],
   "testPresets": [
-    {
-      "name": "debug",
-      "configurePreset": "debug"
-    },
-    {
-      "name": "release",
-      "configurePreset": "release"
-    }
+    { "name": "Windows-Debug", "configurePreset": "windows-debug" },
+    { "name": "Windows-Release", "configurePreset": "windows-release" },
+    { "name": "Linux-Debug", "configurePreset": "linux-debug" },
+    { "name": "Linux-Release", "configurePreset": "linux-release" }
   ]
 }

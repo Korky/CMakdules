@@ -1,5 +1,5 @@
 # Creates barebones for a CMakdules style module
-# Usage: cmake -P cmake/CMakdulesUtils/MakeModule.c
+# Usage: cmake -P cmake/CMakdulesUtils/MakeModule.cmake
 
 
 message("Source directory: ${CMAKE_CURRENT_SOURCE_DIR}")

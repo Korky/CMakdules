@@ -1,7 +1,11 @@
 # CMakdules
 CMake Template Repository using Module Architecture with an External Program/Application Module to serve as entry point.
 
-## Project Structure
+## Getting Started
+
+### Project Structure
+Here's a overview of the template project structure.
+
 ```
 ├── cmake
 │   ├── CMakdules.cmake

@@ -173,6 +173,7 @@ function(discover_modules DISCOVERY_PATH)
     file(GLOB SUBMODULE_DIRS RELATIVE ${DISCOVERY_PATH} ${DISCOVERY_PATH}/*)
     foreach(SUB_DIR ${SUBMODULE_DIRS})
         if (IS_DIRECTORY "${DISCOVERY_PATH}/${SUB_DIR}")
+            message("-- Found Module: ${SUB_DIR}")
             add_subdirectory("${DISCOVERY_PATH}/${SUB_DIR}")
             # Append to existing targets
             list(APPEND EXISTING_TARGETS ${SUB_DIR})

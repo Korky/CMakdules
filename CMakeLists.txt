@@ -6,7 +6,7 @@ project ("CMakdules" LANGUAGES CXX C)
 # Include Macros 
 include("cmake/CMakdules.cmake")
 
-add_subdirectory(project_modules)
+discover_modules(${CMAKE_CURRENT_SOURCE_DIR}/project_modules)
 
 add_subdirectory(project_app)
 

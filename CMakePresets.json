@@ -7,55 +7,68 @@
   },
   "configurePresets": [
     {
-      "name": "windows-debug",
-      "description": "Debug build with LLVM/Clang on Windows",
+      "name": "common-base",
+      "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/windows/debug",
+      "binaryDir": "${sourceDir}/build_files/${presetName}",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/bin",
+        "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/lib",
+        "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/lib"
+      }
+    },
+    {
+      "name": "common-windows",
+      "hidden": true,
+      "inherits": "common-base",
+      "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang-cl",
         "CMAKE_C_COMPILER": "clang-cl",
         "CMAKE_LINKER": "lld-link"
+      }
+    },
+    {
+      "name": "common-linux",
+      "hidden": true,
+      "inherits":"common-base",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_LINKER": "lld"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "description": "Debug build with LLVM/Clang on Windows",
+      "inherits":"common-windows",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"        
       }
     },
     {
       "name": "windows-release",
       "description": "Release build with LLVM/Clang on Windows",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/windows/release",
+      "inherits":"common-windows",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_STANDARD": "20",
-        "CMAKE_CXX_COMPILER": "clang-cl",
-        "CMAKE_C_COMPILER": "clang-cl",
-        "CMAKE_LINKER": "lld-link"
+        "CMAKE_BUILD_TYPE": "Release"
       }
     },
     {
       "name": "linux-debug",
       "description": "Debug build with LLVM/Clang on Linux",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/linux/debug",
+      "inherits":"common-linux",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_CXX_STANDARD": "20",
-        "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_C_COMPILER": "clang",
-        "CMAKE_LINKER": "lld"
+        "CMAKE_BUILD_TYPE": "Debug"
+
       }
     },
     {
       "name": "linux-release",
       "description": "Release build with LLVM/Clang on Linux",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/linux/release",
+      "inherits":"common-linux",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_STANDARD": "20",
-        "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_C_COMPILER": "clang",
-        "CMAKE_LINKER": "lld"
+        "CMAKE_BUILD_TYPE": "Release"
       }
     }
   ],

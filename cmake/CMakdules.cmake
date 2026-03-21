@@ -7,9 +7,9 @@
 #       TYPE
 #           [STATIC, DYANAMIC]
 #       PUBLIC_DEPENDENCIES
-#           [EDGE Module Name List]
+#           [Module Name List]
 #       PRIVATE_DEPENDENCIES
-#           [EDGE Module Name List]
+#           [Module Name List]
 #       EXTERNAL_DEPENDENCIES
 #           [ThirdParty Libraries to link privately]
 #       EXTERNAL_DAISY_CHAINS
@@ -72,19 +72,30 @@ function(register_module MODULE_NAME)
     # Add Library
     if("${MOD_TYPE}" STREQUAL "STATIC")
         add_library(${MODULE_TARGET} STATIC ${MOD_SOURCES})
-    elseif("${MOD_TYPE}" STREQUAL "SHARED")
+    elseif("${MOD_TYPE}" STREQUAL "DYNAMIC")
         add_library(${MODULE_TARGET} SHARED ${MOD_SOURCES})
+    elseif("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
+        add_library(${MODULE_TARGET} INTERFACE ${MOD_SOURCES})
     else()
         add_library(${MODULE_TARGET} ${MOD_SOURCES})
     endif()
 
     # Add Public/Private include folders if they exist
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include")
-        target_include_directories(${MODULE_TARGET} 
-            PUBLIC 
-                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                 $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        )
+        
+        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
+            target_include_directories(${MODULE_TARGET} 
+                INTERFACE 
+                     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                     $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            )
+        else()
+            target_include_directories(${MODULE_TARGET} 
+                PUBLIC 
+                     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                     $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            )
+        endif()
     endif()
 
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src")
@@ -98,21 +109,37 @@ function(register_module MODULE_NAME)
     # Add EDGE-specific Module Dependencies
     foreach(dep ${MOD_PUBLIC_DEPENDENCIES})
         message(STATUS " -- Adding Public dependancy ${dep}")
-        target_link_libraries(${MODULE_TARGET} PUBLIC ${dep})
+        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
+            target_link_libraries(${MODULE_TARGET} INTERFACE ${dep})
+        else()
+            target_link_libraries(${MODULE_TARGET} PUBLIC ${dep})
+        endif()
     endforeach()
     foreach(dep ${MOD_PRIVATE_DEPENDENCIES})
         message(STATUS " -- Adding Private dependancy ${dep}")
-        target_link_libraries(${MODULE_TARGET} PRIVATE ${dep})
+        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
+            target_link_libraries(${MODULE_TARGET} INTERFACE ${dep})
+        else()
+            target_link_libraries(${MODULE_TARGET} PRIVATE ${dep})
+        endif()
     endforeach()
 
     # Add External libraries dependencies
     foreach(dep ${MOD_EXTERNAL_DEPENDENCIES})
         message(STATUS " -- Adding External dependancy ${dep}")
-        target_link_libraries(${MODULE_TARGET} PRIVATE ${dep})
+        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
+            target_link_libraries(${MODULE_TARGET} INTERFACE ${dep})
+        else()
+            target_link_libraries(${MODULE_TARGET} PRIVATE ${dep})
+        endif()
     endforeach()
     foreach(dep ${MOD_EXTERNAL_DAISY_CHAINS})
         message(STATUS " -- Adding daisy chained dependancy ${dep}")
-        target_link_libraries(${MODULE_TARGET} PUBLIC ${dep})
+        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
+            target_link_libraries(${MODULE_TARGET} INTERFACE ${dep})
+        else()
+            target_link_libraries(${MODULE_TARGET} PUBLIC ${dep})
+        endif()
     endforeach()
 
 

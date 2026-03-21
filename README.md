@@ -9,8 +9,8 @@ Here's a overview of the template project structure.
 ```
 ├── cmake
 │   ├── CMakdules.cmake
-│   └── CMakdulesUtils
-│       └── MakeModule.cmake
+│   ├── ConfigVcpkg.cmake
+│   └── MakeModule.cmake
 ├── CMakeLists.txt
 ├── CMakePresets.json
 ├── LICENSE

@@ -1,7 +1,5 @@
 #include "project_app.h"
-#include "module_a.h"
-#include <iostream>
-project_app::project_app() {}
+
 
 int main(int argc, char** argv)
 {

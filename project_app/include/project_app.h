@@ -1,7 +1,3 @@
-// project_app
- // Boilerplate CMakdule Module.
-
- class project_app {
-    public:
-        project_app();
- };
+#pragma once
+#include <iostream>
+#include "module_a.h"

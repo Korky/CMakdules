@@ -1,24 +1,17 @@
-cmake_minimum_required(VERSION 3.21)
-
+cmake_minimum_required(VERSION 3.30)
+set(CMAKE_EXPERIMENTAL_CXX_MODULE_STD ON) 
 # Project
-project ("CMakdules" LANGUAGES CXX C)
+project ("ProjectName" LANGUAGES CXX)
 
 # Include Macros 
-include("cmake/CMakdules.cmake")
+include("cmake/Modules.cmake")
 
-discover_modules(${CMAKE_CURRENT_SOURCE_DIR}/project_modules)
+discover_modules(${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
-add_subdirectory(project_app)
-
-
-add_executable(CMakdulesProgram "project_app/src/project_app.cpp")
-
-
-target_link_libraries(CMakdulesProgram PRIVATE project_app)
-
+add_subdirectory(app)
 
 enable_testing()
 
-add_executable(CMakdulesTest "tests/main.cpp")
+add_executable(ProjectNameTest "tests/main.cpp")
 
-target_link_libraries(CMakdulesTest PRIVATE module_a)
+target_link_libraries(ProjectNameTest PRIVATE a_module)

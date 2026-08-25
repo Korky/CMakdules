@@ -1,87 +1,89 @@
 {
-  "version": 3,
-  "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 21,
-    "patch": 0
-  },
-  "configurePresets": [
-    {
-      "name": "common-base",
-      "hidden": true,
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build_files/${presetName}",
-      "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "20",
-        "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/bin",
-        "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/lib",
-        "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/lib"
-      }
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 30,
+        "patch": 0
     },
-    {
-      "name": "common-windows",
-      "hidden": true,
-      "inherits": "common-base",
-      "cacheVariables": {
-        "CMAKE_CXX_COMPILER": "clang-cl",
-        "CMAKE_C_COMPILER": "clang-cl",
-        "CMAKE_LINKER": "lld-link"
-      }
-    },
-    {
-      "name": "common-linux",
-      "hidden": true,
-      "inherits":"common-base",
-      "cacheVariables": {
-        "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_C_COMPILER": "clang",
-        "CMAKE_LINKER": "lld"
-      }
-    },
-    {
-      "name": "windows-debug",
-      "description": "Debug build with LLVM/Clang on Windows",
-      "inherits":"common-windows",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"        
-      }
-    },
-    {
-      "name": "windows-release",
-      "description": "Release build with LLVM/Clang on Windows",
-      "inherits":"common-windows",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "linux-debug",
-      "description": "Debug build with LLVM/Clang on Linux",
-      "inherits":"common-linux",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-
-      }
-    },
-    {
-      "name": "linux-release",
-      "description": "Release build with LLVM/Clang on Linux",
-      "inherits":"common-linux",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    }
-  ],
-  "buildPresets": [
-    { "name": "Windows-Debug", "configurePreset": "windows-debug" },
-    { "name": "Windows-Release", "configurePreset": "windows-release" },
-    { "name": "Linux-Debug", "configurePreset": "linux-debug" },
-    { "name": "Linux-Release", "configurePreset": "linux-release" }
-  ],
-  "testPresets": [
-    { "name": "Windows-Debug", "configurePreset": "windows-debug" },
-    { "name": "Windows-Release", "configurePreset": "windows-release" },
-    { "name": "Linux-Debug", "configurePreset": "linux-debug" },
-    { "name": "Linux-Release", "configurePreset": "linux-release" }
-  ]
+    "configurePresets": [
+        {
+            "name": "common-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build_files/${presetName}",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_LINKER": "lld",
+                "CMAKE_CXX_STANDARD": "23",
+                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+                "CMAKE_CXX_SCAN_FOR_MODULES": "ON",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/bin",
+                "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/lib",
+                "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": "${sourceDir}/staged_builds/${presetName}/lib"
+            }
+        },
+        {
+            "name": "common-debug",
+            "hidden": true,
+            "inherits": "common-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "common-release",
+            "hidden": true,
+            "inherits": "common-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name":"x64-Debug",
+            "description": "Debug preset for x64 arch LLVM/Clang",
+            "inherits":"common-debug"
+        },
+        {
+            "name":"x64-Release",
+            "description": "Release preset for x64 arch LLVM/Clang",
+            "inherits":"common-debug"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "Windows-Debug",
+            "configurePreset": "x64-Debug"
+        },
+        {
+            "name": "Windows-Release",
+            "configurePreset": "x64-Release"
+        },
+        {
+            "name": "Linux-Debug",
+            "configurePreset": "x64-Debug"
+        },
+        {
+            "name": "Linux-Release",
+            "configurePreset": "x64-Release"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "Windows-Debug",
+            "configurePreset": "common-debug"
+        },
+        {
+            "name": "Windows-Release",
+            "configurePreset": "common-release"
+        },
+        {
+            "name": "Linux-Debug",
+            "configurePreset": "common-debug"
+        },
+        {
+            "name": "Linux-Release",
+            "configurePreset": "common-release"
+        }
+    ]
 }

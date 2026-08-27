@@ -22,29 +22,29 @@ On Linux you can install them through your distribution’s package manager (e.g
 
 ```
 ├── cmake
-│   ├── Modules.cmake      # Helper functions: register_module, discover_modules
-│   ├── ConfigVcpkg.cmake  # Optional helper to bootstrap vcpkg
-│   └── CMakdules.cmake    # Script for project initialization and module generation
-├── CMakeLists.txt          # Root CMake file – discovers modules and builds app/test
-├── CMakePresets.json       # Build presets for Windows/Linux, Debug/Release
+│   ├── Modules.cmake         # Helper functions: register_module, discover_modules
+│   ├── ConfigVcpkg.cmake     # Optional helper to bootstrap vcpkg
+│   └── CMakdules.cmake       # Script for project initialization and module generation
+├── CMakeLists.txt            # Root CMake file – discovers modules and builds app/test
+├── CMakePresets.json         # Build presets for Windows/Linux, Debug/Release
 ├── LICENSE
-├── app                     # External program (the entry point)
+├── app                       # External program (the entry point)
 │   ├── CMakeLists.txt
-│   │   ├── include
-│   │   │   └── app.h
+│   │   ├── include           # The idea of modules is to move away from header files
+│   │   │   └── app.h         # but need to demo the app having some legacy features 
 │   │   └── src
-│   │       └── app.cpp          # Uses the `a_module` module
-├── modules                 # Collection of C++20 modules
-│   └── a_module            # Example module
+│   │       └── app.cpp       # Uses the `a_module` module
+├── modules                   # Collection of C++20 modules
+│   └── a_module              # Example module
 │       ├── CMakeLists.txt
-│       ├── include
-│       │   └── a_module.h   # Header (optional)
 │       └── src
-│           └── a_module.cppm
-├── tests                   # Simple test harness
-│   └── main.cpp             # Imports `a_module` and runs a function
+│           ├── a_module.cppm # C++20 Module declaration/implementation (.ixx in MSVC)
+│           └── a_module.cpp  # (optional) split implementations and hide SDK's APIs
+├── tests                     # Simple test harness
+│   └── main.cpp              # Imports `a_module` and runs a function
 └── README.md
 ```
+> We will move the app to use modules when std module becomes production ready. 
 
 The CMake project is named **ProjectName** (see `project("ProjectName")`).  All targets are prefixed with this name, e.g. `ProjectNameApp`, `ProjectNameTest`.
 

@@ -5,30 +5,23 @@
 # register_module (
 #   MODULE_NAME
 #       TYPE
-#           [STATIC, DYANAMIC]
+#           [STATIC, DYANAMIC] (Deprecated .. maybe!?)
 #       PUBLIC_DEPENDENCIES
 #           [Module Name List]
 #       PRIVATE_DEPENDENCIES
 #           [Module Name List]
-#       EXTERNAL_DEPENDENCIES
-#           [ThirdParty Libraries to link privately]
-#       EXTERNAL_DAISY_CHAINS
-#           [ThirdParty Libraries to daisy chain]
 # )
 # Usage:
 # register_module(
 #   MyModule 
 #       TYPE
-#           STATIC
+#           STATIC (replace for MSVC vs Clang!?)
 #       PUBLIC_DEPENDENCIES
 #           ModuleA
 #           ModuleB 
 #       PRIVATE_DEPENDENCIES
 #           ModuleC 
-#       EXTERNAL_DEPENDENCIES
 #           pthread
-#       EXTERNAL_DAISY_CHAINS
-#           GlobalNeededLib
 #)
 # ===================================================
 
@@ -40,39 +33,37 @@ function(register_module MODULE_NAME)
     set(multiValueArgs 
             SOURCES 
             PUBLIC_DEPENDENCIES 
-            PRIVATE_DEPENDENCIES 
-            EXTERNAL_DEPENDENCIES 
-            EXTERNAL_DAISY_CHAINS
+            PRIVATE_DEPENDENCIES
     )
     cmake_parse_arguments(MOD "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    # sets seprate Var for Target
+    # Sets seprate Var for Target
     set(MODULE_TARGET ${MODULE_NAME})
 
-    message(STATUS "Configuring ${MODULE_NAME} module")
+    message(STATUS "|\tConfiguring ${MODULE_NAME} module")
     
     # if no sources files provided scan for common folders
-    # TODO: something tells me this will bring issues when having .h in source
-    #       like when you have private headers
     if(NOT MOD_SOURCES)
-        message(STATUS " -- Scanning for files in ${MODULE_NAME}")
+        message(STATUS "|\tScanning for files in ${MODULE_NAME}")
         file(GLOB_RECURSE MOD_SOURCES
             "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cppm"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/*.ixx"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cxx"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc"
         )
     endif()
 
-    # if nothing to build stop
+    # If nothing to build stop
     if(NOT MOD_SOURCES)
-        message(WARNING "Module ${MODULE_NAME} has no sources. Skipping.")
+        message(FATAL_ERROR "Module ${MODULE_NAME} has no sources. Skipping.")
         return()
     endif()
-
+    message(STATUS "|\tCreating CXX Module ${MODULE_NAME}")
+    # Start C++20 Module Configuration
     add_library(${MODULE_TARGET} STATIC)
-
-
-
     set_source_files_properties(${MOD_SOURCES} PROPERTIES LANGUAGE CXX)
-
+    # Set Module Source Files
     target_sources(
         ${MODULE_TARGET}
             PUBLIC
@@ -80,42 +71,15 @@ function(register_module MODULE_NAME)
                 BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
                 FILES ${MOD_SOURCES}
     )
-  
-
-    # Add EDGE-specific Module Dependencies
+    # Add Module Dependencies.
+    # NOTE: include directories handled at module's CMakeList.txt.
     foreach(dep ${MOD_PUBLIC_DEPENDENCIES})
-        message(STATUS " -- Adding Public dependancy ${dep}")
-        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
-            target_link_libraries(${MODULE_TARGET} INTERFACE ${dep})
-        else()
-            target_link_libraries(${MODULE_TARGET} PUBLIC ${dep})
-        endif()
+        message(STATUS "|\tAdding Public dependancy ${dep}")
+        target_link_libraries(${MODULE_TARGET} PUBLIC ${dep})
     endforeach()
     foreach(dep ${MOD_PRIVATE_DEPENDENCIES})
-        message(STATUS " -- Adding Private dependancy ${dep}")
-        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
-            target_link_libraries(${MODULE_TARGET} INTERFACE ${dep})
-        else()
-            target_link_libraries(${MODULE_TARGET} PRIVATE ${dep})
-        endif()
-    endforeach()
-
-    # Add External libraries dependencies
-    foreach(dep ${MOD_EXTERNAL_DEPENDENCIES})
-        message(STATUS " -- Adding External dependancy ${dep}")
-        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
-            target_link_libraries(${MODULE_TARGET} INTERFACE ${dep})
-        else()
-            target_link_libraries(${MODULE_TARGET} PRIVATE ${dep})
-        endif()
-    endforeach()
-    foreach(dep ${MOD_EXTERNAL_DAISY_CHAINS})
-        message(STATUS " -- Adding daisy chained dependancy ${dep}")
-        if("${MOD_TYPE}" STREQUAL "HEADER_ONLY")
-            target_link_libraries(${MODULE_TARGET} INTERFACE ${dep})
-        else()
-            target_link_libraries(${MODULE_TARGET} PUBLIC ${dep})
-        endif()
+        message(STATUS "|\tAdding Private dependancy ${dep}")
+        target_link_libraries(${MODULE_TARGET} PRIVATE ${dep})
     endforeach()
 
     set_target_properties(${MODULE_TARGET} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -150,7 +114,7 @@ function(discover_modules DISCOVERY_PATH)
     file(GLOB SUBMODULE_DIRS RELATIVE ${DISCOVERY_PATH} ${DISCOVERY_PATH}/*)
     foreach(SUB_DIR ${SUBMODULE_DIRS})
         if (IS_DIRECTORY "${DISCOVERY_PATH}/${SUB_DIR}")
-            message("-- Found Module: ${SUB_DIR}")
+            message(STATUS "Found Module: ${SUB_DIR}")
             add_subdirectory("${DISCOVERY_PATH}/${SUB_DIR}")
             # Append to existing targets
             list(APPEND EXISTING_TARGETS ${SUB_DIR})
@@ -166,12 +130,13 @@ function(generate_module IN_DIR MODULE_NAME)
     # Parsing Optional Params
     set(options)
     set(multiValueArgs
+            DEPENDENCIES
             CLASSES
             FUNCTIONS
     )
     cmake_parse_arguments(EXP "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    # TODO: pre-generate with functions and or classes
+    # TODO: pre-generate with dependencies.
 
     message("Module destination: ${CMAKE_CURRENT_SOURCE_DIR}/${IN_DIR}")
     
@@ -186,7 +151,7 @@ function(generate_module IN_DIR MODULE_NAME)
     
     message("Creating minimal files for: ${MODULE_NAME}")
     
-    file(WRITE "${SRC_DIR}/${MODULE_NAME}.cppm" "export module ${MODULE_NAME};\n\n export namespace ${MODULE_NAME} { \n\n\tvoid foo() {}\n\n}")
+    file(WRITE "${SRC_DIR}/${MODULE_NAME}.cppm" "export module ${MODULE_NAME};\n\n export namespace ${MODULE_NAME} { \n\n\tvoid init() {}\n\n}")
     file(WRITE "${MODULE_DIR}/CMakeLists.txt" "# ${MODULE_NAME} Module\n # This is a generated CMakeLists.txt for the module.\n\n register_module(${MODULE_NAME})\n")
 
 

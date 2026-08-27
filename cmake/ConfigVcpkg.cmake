@@ -49,3 +49,14 @@ endif()
 
 
 message("Modify CMakePresets.json add cachedVariables \"CMAKE_TOOLCHAIN_FILE\": \"${VCPKG_DEST_DIR}/scripts/buildsystems/vcpkg.cmake\"")
+
+# Create a boilerplate vcpkg.json if it doesn't exist
+get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg.json")
+    set(VCPKG_JSON_CONTENT "{\n  \"name\": \"${PROJECT_NAME_LOWER}\",\n  \"version-string\": \"0.1.0\",\n  \"dependencies\": []\n}")
+    file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg.json" "${VCPKG_JSON_CONTENT}")
+    message(STATUS "Created boilerplate vcpkg.json at ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg.json")
+else()
+    message(STATUS "vcpkg.json already exists, skipping creation.")
+endif()
